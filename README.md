@@ -57,12 +57,11 @@ webcrawler-tfidf/
 │                   │   └── Ranker.java
 │                   └── util/
 │                       └── HtmlParser.java
-└── src/
 └── test/
-└── java/
-└── com/
-└── tfidf/
-└── WebCrawlerTest.java
+    └── java/
+        └── com/
+            └── tfidf/
+                └── WebCrawlerTest.java
 ```
 
 ---
