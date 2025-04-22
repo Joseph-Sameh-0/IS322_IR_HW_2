@@ -13,8 +13,8 @@ public class WebCrawler {
     public static void main(String[] args) throws Exception {
         final int MAX_PAGES = 10;
 
-        List<String> keywordsSeed1 = List.of("Pharaoh", "Ancient", "Old_Kingdom", "Amun", "Akhenaten", "Egypt", "Dynasty", "Pyramid");
-        List<String> keywordsSeed2 = List.of("Dynasty", "List_of_pharaohs", "Royal", "Horus", "Nomen", "Scepter", "Chronology", "Kings");
+//        List<String> keywordsSeed1 = List.of("Pharaoh", "Ancient", "Old_Kingdom", "Amun", "Akhenaten", "Egypt", "Dynasty", "Pyramid");
+//        List<String> keywordsSeed2 = List.of("Dynasty", "List_of_pharaohs", "Royal", "Horus", "Nomen", "Scepter", "Chronology", "Kings");
 
         System.out.println("Seed 1:");
         crawl("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
