@@ -1,13 +1,9 @@
 package org.tfidf.crawler;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
-import org.jsoup.select.Elements;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+
 
 public class WebCrawler {
     public static void main(String[] args) throws Exception {
