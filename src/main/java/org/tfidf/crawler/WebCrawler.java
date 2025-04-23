@@ -16,7 +16,8 @@ public class WebCrawler {
     static int docCounter = 1;
     public static void main(String[] args) throws Exception {
         final int MAX_PAGES = 10;
-
+        
+        new java.io.File("Documents").mkdirs();
 //        List<String> keywordsSeed1 = List.of("Pharaoh", "Ancient", "Old_Kingdom", "Amun", "Akhenaten", "Egypt", "Dynasty", "Pyramid");
 //        List<String> keywordsSeed2 = List.of("Dynasty", "List_of_pharaohs", "Royal", "Horus", "Nomen", "Scepter", "Chronology", "Kings");
 
@@ -54,7 +55,7 @@ public class WebCrawler {
             }
 
             if (cleanText.toString().trim().isEmpty()) continue;
-            String filename = "doc" + docCounter + ".txt";
+            String filename = "Documents/doc" + docCounter + ".txt";
                         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
                             writer.println("URL: " + currentUrl);
                             writer.println("Title: " + title);
