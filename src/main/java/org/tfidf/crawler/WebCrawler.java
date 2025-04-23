@@ -1,9 +1,6 @@
 package org.tfidf.crawler;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -14,19 +11,6 @@ import java.util.LinkedList;
 public class WebCrawler {
     static HashSet<String> visited = new HashSet<>();
     static int docCounter = 1;
-    public static void main(String[] args) throws Exception {
-        final int MAX_PAGES = 10;
-        
-        new java.io.File("Documents").mkdirs();
-//        List<String> keywordsSeed1 = List.of("Pharaoh", "Ancient", "Old_Kingdom", "Amun", "Akhenaten", "Egypt", "Dynasty", "Pyramid");
-//        List<String> keywordsSeed2 = List.of("Dynasty", "List_of_pharaohs", "Royal", "Horus", "Nomen", "Scepter", "Chronology", "Kings");
-
-        System.out.println("Seed 1:");
-        crawl("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
-
-        System.out.println("\nSeed 2:");
-        crawl("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES);
-    }
     public static void crawl(String seedUrl, int maxPages) throws Exception {
         LinkedList<String> queue = new LinkedList<>();
         queue.add(seedUrl);
@@ -55,6 +39,7 @@ public class WebCrawler {
             }
 
             if (cleanText.toString().trim().isEmpty()) continue;
+            new java.io.File("Documents").mkdirs();
             String filename = "Documents/doc" + docCounter + ".txt";
                         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
                             writer.println("URL: " + currentUrl);
