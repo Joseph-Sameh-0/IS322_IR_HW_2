@@ -1,4 +1,5 @@
 package org.tfidf.text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -6,6 +7,7 @@ import java.util.Properties;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+
 public class Normalizer {
 
     private StanfordCoreNLP pipeline;
@@ -36,21 +38,22 @@ public class Normalizer {
     }
 
     public List<String> getLemmas(String text) {
-    List<String> lemmas = new ArrayList<>();
-    CoreDocument document = new CoreDocument(text);
-    pipeline.annotate(document);
-    for (CoreLabel token : document.tokens()) {
-        String lemma = token.lemma();
-        if (lemma.matches("\\w+")) {
-            lemmas.add(lemma);
+        List<String> lemmas = new ArrayList<>();
+        CoreDocument document = new CoreDocument(text);
+        pipeline.annotate(document);
+        for (CoreLabel token : document.tokens()) {
+            String lemma = token.lemma();
+            if (lemma.matches("\\w+")) {
+                lemmas.add(lemma);
+            }
         }
+        return lemmas;
     }
-    return lemmas;
-}
 
-    // public static void main(String[] args) {
-    //     Normalizer normalizer = new Normalizer();
-    //     normalizer.normalizeText("ran");
-    // }
+    public static void main(String[] args) {
+        Normalizer normalizer = new Normalizer();
+        normalizer.normalizeText("ran");
+    }
+
 
 }
