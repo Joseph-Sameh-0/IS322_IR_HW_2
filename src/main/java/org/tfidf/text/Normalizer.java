@@ -50,10 +50,9 @@ public class Normalizer {
         return lemmas;
     }
 
-    public static void main(String[] args) {
-        Normalizer normalizer = new Normalizer();
-        normalizer.normalizeText("ran");
-    }
-
-
+//    public static void main(String[] args) {
+//        Normalizer normalizer = new Normalizer();
+//        normalizer.normalizeText("ran");
+//    }
+    
 }
