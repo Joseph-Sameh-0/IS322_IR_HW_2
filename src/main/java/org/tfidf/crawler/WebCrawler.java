@@ -13,9 +13,14 @@ import java.util.List;
 
 
 public class WebCrawler {
+    // Set to store all visited URLs to avoid revisiting and duplicating crawled links
     static HashSet<String> visited = new HashSet<>();
+    // Counter used to uniquely name output files (e.g., doc1.txt, doc2.txt)
     static int docCounter = 1;
-
+    /**
+     * Crawl and save up to maxPages documents starting from the given seed URL.
+     * Each visited document will be saved into a file under the Documents/ folder.
+     */
     public static void crawl(String seedUrl, int maxPages) throws Exception {
         LinkedList<String> queue = new LinkedList<>();
         queue.add(seedUrl);
