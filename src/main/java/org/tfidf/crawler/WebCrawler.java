@@ -1,7 +1,9 @@
 package org.tfidf.crawler;
+
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -13,20 +15,21 @@ import java.util.List;
 public class WebCrawler {
     static HashSet<String> visited = new HashSet<>();
     static int docCounter = 1;
+
     public static void crawl(String seedUrl, int maxPages) throws Exception {
         LinkedList<String> queue = new LinkedList<>();
         queue.add(seedUrl);
-        int  localSaved = 1;
+        int localSaved = 1;
 
         while (!queue.isEmpty() && localSaved <= maxPages) {
             String currentUrl = queue.poll();
-            if (visited.contains(currentUrl)|| !currentUrl.startsWith("https://en.wikipedia.org/wiki/")) {
+            if (visited.contains(currentUrl) || !currentUrl.startsWith("https://en.wikipedia.org/wiki/")) {
                 continue;
             }
-                visited.add(currentUrl);
-                Document doc = Jsoup.connect(currentUrl).get();
-                 // Get the page title
-                 String title = doc.title();
+            visited.add(currentUrl);
+            Document doc = Jsoup.connect(currentUrl).get();
+            // Get the page title
+            String title = doc.title();
 
             // Extract and clean paragraph text
             Elements paragraphs = doc.select("p");
@@ -43,21 +46,20 @@ public class WebCrawler {
             if (cleanText.toString().trim().isEmpty()) continue;
             new java.io.File("Documents").mkdirs();
             String filename = "Documents/doc" + docCounter + ".txt";
-                        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-                            writer.println("URL: " + currentUrl);
-                            writer.println("Title: " + title);
-                            writer.println();
-                            writer.println(cleanText);
-                        }
-                 docCounter++;
-                 localSaved++;
-                System.out.println("Visited (" + visited.size() + "): " + currentUrl);
-                for (Element link : doc.select("a[href]")) {
-                    String next_link = link.attr("abs:href").split("#")[0];
-                    if (next_link.startsWith("https://en.wikipedia.org/wiki/") && next_link.matches("https://en\\.wikipedia\\.org/wiki/[^:#]+") &&!next_link.contains(":") && next_link.contains("Pharaoh")||next_link.contains("Ancient")||next_link.contains("Royal")||next_link.contains("First Dynasty")||next_link.contains("Kings")||next_link.contains("Old Kingdom")||next_link.contains("Amun")||next_link.contains("Akhenaten")||next_link.contains("Egypt")||next_link.contains("Dynasty")||next_link.contains("Roman") &&
-                        !visited.contains(next_link) && !queue.contains(next_link)) {
-                        queue.add(next_link);
-                    }
+            try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+                writer.println("URL: " + currentUrl);
+                writer.println("Title: " + title);
+                writer.println();
+                writer.println(cleanText);
+            }
+            docCounter++;
+            localSaved++;
+            System.out.println("Visited (" + visited.size() + "): " + currentUrl);
+            for (Element link : doc.select("a[href]")) {
+                String next_link = link.attr("abs:href").split("#")[0];
+                if (isValidLink(next_link, queue)) {
+                    queue.add(next_link);
+                }
             }
         }
     }
@@ -66,62 +68,74 @@ public class WebCrawler {
         LinkedList<String> queue = new LinkedList<>();
         queue.add(seedUrl);
         List<String> documents = new ArrayList<>();
-        int localSaved = 1;
+        int pagesProcessed = 0;
 
-        while (!queue.isEmpty() && localSaved <= maxPages) {
+        while (!queue.isEmpty() && pagesProcessed < maxPages) {
             String currentUrl = queue.poll();
+
+            // Skip if already visited or doesn't match our domain
             if (visited.contains(currentUrl) || !currentUrl.startsWith("https://en.wikipedia.org/wiki/")) {
                 continue;
             }
+
             visited.add(currentUrl);
+            System.out.println("Processing: " + currentUrl);
 
-            Document doc = Jsoup.connect(currentUrl).get();
-            String title = doc.title();
+            try {
+                Document doc = Jsoup.connect(currentUrl).get();
+                String title = doc.title();
 
-            // Extract and clean paragraph text (same logic)
-            Elements paragraphs = doc.select("p");
-            StringBuilder cleanText = new StringBuilder();
-            for (Element p : paragraphs) {
-                String paragraph = p.text().replaceAll("\\[.*?\\]", "");
-                if (!paragraph.trim().isEmpty()) {
-                    cleanText.append(paragraph).append("\n");
+                // Extract and clean content
+                Elements paragraphs = doc.select("p");
+                StringBuilder content = new StringBuilder();
+                for (Element p : paragraphs) {
+                    String text = p.text().replaceAll("\\[.*?\\]", "");
+                    if (!text.trim().isEmpty()) {
+                        content.append(text).append("\n");
+                    }
                 }
-            }
 
-            if (cleanText.toString().trim().isEmpty()) continue;
-
-            // Format document with metadata (same as file version)
-            String document = "URL: " + currentUrl + "\n" +
-                    "Title: " + title + "\n\n" +
-                    cleanText.toString();
-
-            documents.add(document);
-            localSaved++;
-            System.out.println("Visited (" + visited.size() + "): " + currentUrl);
-
-            // Same link extraction logic
-            for (Element link : doc.select("a[href]")) {
-                String next_link = link.attr("abs:href").split("#")[0];
-                if (next_link.startsWith("https://en.wikipedia.org/wiki/") &&
-                        next_link.matches("https://en\\.wikipedia\\.org/wiki/[^:#]+") &&
-                        !next_link.contains(":") &&
-                        (next_link.contains("Pharaoh") ||
-                                next_link.contains("Ancient") ||
-                                next_link.contains("Royal") ||
-                                next_link.contains("First Dynasty") ||
-                                next_link.contains("Kings") ||
-                                next_link.contains("Old Kingdom") ||
-                                next_link.contains("Amun") ||
-                                next_link.contains("Akhenaten") ||
-                                next_link.contains("Egypt") ||
-                                next_link.contains("Dynasty") ||
-                                next_link.contains("Roman")) &&
-                        !visited.contains(next_link) &&
-                        !queue.contains(next_link)) {
-                    queue.add(next_link);
+                if (content.length() > 0) {
+                    String document = "URL: " + currentUrl + "\n" +
+                            "Title: " + title + "\n\n" +
+                            content.toString();
+                    documents.add(document);
+                    pagesProcessed++;
+                    System.out.println("Crawled (" + pagesProcessed + "): " + currentUrl);
                 }
+
+                // Extract and filter links
+                for (Element link : doc.select("a[href]")) {
+                    String nextUrl = link.attr("abs:href").split("#")[0];
+
+                    if (isValidLink(nextUrl, queue)) {
+                        if (!visited.contains(nextUrl) && !queue.contains(nextUrl)) {
+                            queue.add(nextUrl);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error processing " + currentUrl + ": " + e.getMessage());
             }
         }
         return documents;
     }
+
+    private static boolean isValidLink(String url, LinkedList<String> queue) {
+        return url.startsWith("https://en.wikipedia.org/wiki/")
+                && url.matches("https://en\\.wikipedia\\.org/wiki/[^:#]+")
+                && !url.contains(":") && url.contains("Pharaoh")
+                || url.contains("Ancient")
+                || url.contains("Royal")
+                || url.contains("First Dynasty")
+                || url.contains("Kings")
+                || url.contains("Old Kingdom")
+                || url.contains("Amun")
+                || url.contains("Akhenaten")
+                || url.contains("Egypt")
+                || url.contains("Dynasty")
+                || url.contains("Roman") &&
+                !visited.contains(url) && !queue.contains(url);
+    }
+
 }
