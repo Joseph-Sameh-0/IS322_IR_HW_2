@@ -24,14 +24,15 @@ public class WebCrawler {
     public static void crawl(String seedUrl, int maxPages) throws Exception {
         LinkedList<String> queue = new LinkedList<>();
         queue.add(seedUrl);
-        int localSaved = 1;
+        int localSaved = 1;// track number of saved pages from this seed
 
         while (!queue.isEmpty() && localSaved <= maxPages) {
             String currentUrl = queue.poll();
+             // Skip if already visited or invalid Wikipedia page
             if (visited.contains(currentUrl) || !currentUrl.startsWith("https://en.wikipedia.org/wiki/")) {
                 continue;
             }
-            visited.add(currentUrl);
+            visited.add(currentUrl);// mark as visited
             Document doc = Jsoup.connect(currentUrl).get();
             // Get the page title
             String title = doc.title();
@@ -47,8 +48,10 @@ public class WebCrawler {
                     cleanText.append(paragraph).append("\n");
                 }
             }
-
+             // Skip if page content is empty
             if (cleanText.toString().trim().isEmpty()) continue;
+            
+             // Create output folder if not already created
             new java.io.File("Documents").mkdirs();
             String filename = "Documents/doc" + docCounter + ".txt";
             try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
@@ -60,6 +63,7 @@ public class WebCrawler {
             docCounter++;
             localSaved++;
             System.out.println("Visited (" + visited.size() + "): " + currentUrl);
+             // Extract links from current page and add valid ones to the queue
             for (Element link : doc.select("a[href]")) {
                 String next_link = link.attr("abs:href").split("#")[0];
                 if (isValidLink(next_link, queue)) {
@@ -68,7 +72,8 @@ public class WebCrawler {
             }
         }
     }
-
+    //Crawl pages and return document contents in memory (no file writing).
+    // to process data in memory, for indexing
     public static List<String> crawlToMemory(String seedUrl, int maxPages) throws Exception {
         LinkedList<String> queue = new LinkedList<>();
         queue.add(seedUrl);
@@ -125,7 +130,11 @@ public class WebCrawler {
         }
         return documents;
     }
-
+ /**
+     * Filter whether a given URL is valid for crawling.
+     * Must be an English Wikipedia article (no special pages like "Category,Home").
+     * Must contain at least one relevant keyword to stay on topic.
+     */
     private static boolean isValidLink(String url, LinkedList<String> queue) {
         return url.startsWith("https://en.wikipedia.org/wiki/")
                 && url.matches("https://en\\.wikipedia\\.org/wiki/[^:#]+")
