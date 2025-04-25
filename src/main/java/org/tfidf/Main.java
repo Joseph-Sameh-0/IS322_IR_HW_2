@@ -25,6 +25,7 @@ public class Main {
 
         // 1. Start crawling from seed URLs
         List<String> documents = WebCrawler.crawlToMemory("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
+        documents.addAll(WebCrawler.crawlToMemory("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES));
 
 //        System.out.println(documents);
         System.out.println("Crawled " + documents.size() + " documents");
