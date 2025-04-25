@@ -11,6 +11,6 @@ public class Posting {
 
     @Override
     public String toString() {
-        return "(docID=" + docID + ", tf=" + tf + ")";
+        return String.format("(docID=%-3d, tf=%-2d)", docID, tf);
     }
 }

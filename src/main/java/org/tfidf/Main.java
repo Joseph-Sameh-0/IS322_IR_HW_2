@@ -1,4 +1,5 @@
 package org.tfidf;
+
 import org.tfidf.index.InvertedIndex;
 
 
@@ -15,9 +16,9 @@ public class Main {
         // crawler.crawl("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES);
 
         InvertedIndex index = new InvertedIndex();
-            index.buildIndex("Documents");
-            index.printIndex(); 
-            
+        index.buildIndex("Documents");
+        index.printIndex();
+
 
     }
 }
