@@ -3,6 +3,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.tfidf.text.Normalizer;
 
 public class InvertedIndex {
@@ -49,6 +51,44 @@ public class InvertedIndex {
             }
 
             docID++; 
+        }
+    }
+
+    /**
+     * Builds the inverted index from a list of documents
+     * @param documents List of document contents (each String is one document)
+     */
+    public void buildIndex(List<String> documents) {
+        if (documents == null || documents.isEmpty()) return;
+
+        int docID = 1;
+        for (String document : documents) {
+            // Skip metadata lines (like URL:, Title:) if present in the document string
+            String processedContent = Arrays.stream(document.split("\n"))
+                    .filter(line -> !line.startsWith("URL:") &&
+                            !line.startsWith("Title:") &&
+                            !line.trim().isEmpty())
+                    .collect(Collectors.joining(" "));
+
+            Map<String, Integer> termFrequency = new HashMap<>();
+            List<String> tokens = normalizer.getLemmas(processedContent);
+
+            for (String token : tokens) {
+                token = token.toLowerCase().replaceAll("\\W+", "");
+                if (!token.isEmpty()) {
+                    termFrequency.put(token, termFrequency.getOrDefault(token, 0) + 1);
+                }
+            }
+
+            // Add to index
+            for (Map.Entry<String, Integer> entry : termFrequency.entrySet()) {
+                String term = entry.getKey();
+                int tf = entry.getValue();
+                index.computeIfAbsent(term, k -> new ArrayList<>())
+                        .add(new Posting(docID, tf));
+            }
+
+            docID++;
         }
     }
 

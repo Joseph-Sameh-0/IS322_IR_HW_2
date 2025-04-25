@@ -4,8 +4,10 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class WebCrawler {
@@ -58,5 +60,68 @@ public class WebCrawler {
                     }
             }
         }
+    }
+
+    public static List<String> crawlToMemory(String seedUrl, int maxPages) throws Exception {
+        LinkedList<String> queue = new LinkedList<>();
+        queue.add(seedUrl);
+        List<String> documents = new ArrayList<>();
+        int localSaved = 1;
+
+        while (!queue.isEmpty() && localSaved <= maxPages) {
+            String currentUrl = queue.poll();
+            if (visited.contains(currentUrl) || !currentUrl.startsWith("https://en.wikipedia.org/wiki/")) {
+                continue;
+            }
+            visited.add(currentUrl);
+
+            Document doc = Jsoup.connect(currentUrl).get();
+            String title = doc.title();
+
+            // Extract and clean paragraph text (same logic)
+            Elements paragraphs = doc.select("p");
+            StringBuilder cleanText = new StringBuilder();
+            for (Element p : paragraphs) {
+                String paragraph = p.text().replaceAll("\\[.*?\\]", "");
+                if (!paragraph.trim().isEmpty()) {
+                    cleanText.append(paragraph).append("\n");
+                }
+            }
+
+            if (cleanText.toString().trim().isEmpty()) continue;
+
+            // Format document with metadata (same as file version)
+            String document = "URL: " + currentUrl + "\n" +
+                    "Title: " + title + "\n\n" +
+                    cleanText.toString();
+
+            documents.add(document);
+            localSaved++;
+            System.out.println("Visited (" + visited.size() + "): " + currentUrl);
+
+            // Same link extraction logic
+            for (Element link : doc.select("a[href]")) {
+                String next_link = link.attr("abs:href").split("#")[0];
+                if (next_link.startsWith("https://en.wikipedia.org/wiki/") &&
+                        next_link.matches("https://en\\.wikipedia\\.org/wiki/[^:#]+") &&
+                        !next_link.contains(":") &&
+                        (next_link.contains("Pharaoh") ||
+                                next_link.contains("Ancient") ||
+                                next_link.contains("Royal") ||
+                                next_link.contains("First Dynasty") ||
+                                next_link.contains("Kings") ||
+                                next_link.contains("Old Kingdom") ||
+                                next_link.contains("Amun") ||
+                                next_link.contains("Akhenaten") ||
+                                next_link.contains("Egypt") ||
+                                next_link.contains("Dynasty") ||
+                                next_link.contains("Roman")) &&
+                        !visited.contains(next_link) &&
+                        !queue.contains(next_link)) {
+                    queue.add(next_link);
+                }
+            }
+        }
+        return documents;
     }
 }
