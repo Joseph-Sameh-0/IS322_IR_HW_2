@@ -14,7 +14,10 @@ public class InvertedIndex {
         File folder = new File(folderPath);
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt"));
         if (files == null) return;
-        Arrays.sort(files); // sort files
+
+        files = Arrays.stream(files)
+                .sorted(Comparator.comparingInt(f -> extractFileNumber(f.getName())))
+                .toArray(File[]::new);
 
         int docID = 1; 
         for (File file : files) {
@@ -49,6 +52,12 @@ public class InvertedIndex {
         }
     }
 
+    private int extractFileNumber(String name) {
+        // Remove non-digits, parse as int
+        String numStr = name.replaceAll("\\D+", "");
+        return numStr.isEmpty() ? 0 : Integer.parseInt(numStr);
+    }
+
     public Map<String, List<Posting>> getIndex() {
         return index;
     }
@@ -56,7 +65,7 @@ public class InvertedIndex {
     // Print the inverted index 
     public void printIndex() {
         for (Map.Entry<String, List<Posting>> entry : index.entrySet()) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
+            System.out.printf("%-15s -> %s%n", entry.getKey(), entry.getValue());
         }
     }
 }
