@@ -11,6 +11,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A simple Wikipedia Web Crawler.
+ * Downloads articles starting from a seed URL, saves their content in Documents.
+ */
 
 public class WebCrawler {
     // Set to store all visited URLs to avoid revisiting and duplicating crawled links
@@ -22,7 +26,7 @@ public class WebCrawler {
      * Each visited document will be saved into a file under the Documents/ folder.
      */
     public static void crawl(String seedUrl, int maxPages) throws Exception {
-        LinkedList<String> queue = new LinkedList<>();
+        LinkedList<String> queue = new LinkedList<>();   // Queue to manage URLs to visit during crawling
         queue.add(seedUrl);
         int localSaved = 1;// track number of saved pages from this seed
 
@@ -72,7 +76,7 @@ public class WebCrawler {
             }
         }
     }
-    //Crawl pages and return document contents in memory (no file writing).
+    // Crawl pages and return document contents in memory (no file writing).
     // to process data in memory, for indexing
     public static List<String> crawlToMemory(String seedUrl, int maxPages) throws Exception {
         LinkedList<String> queue = new LinkedList<>();
