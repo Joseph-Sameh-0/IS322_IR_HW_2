@@ -20,22 +20,17 @@ public class TFIDFCalculator {
     public void compute() {
         for (String term : invertedIndex.keySet()) {
             List<Posting> postings = invertedIndex.get(term);
-            double idf = calculateIDF(term); // Calculate IDF on demand
+            double idf = calculateIDF(term);
 
             for (Posting posting : postings) {
                 int docId = posting.docID;
                 int tf = posting.tf;
 
-                // Calculate TF weight: 1 + log10(tf)
                 double tfWeight = 1 + Math.log10(tf);
 
-                // TF-IDF = TF * IDF
                 double tfidf = tfWeight * idf;
 
-                // Create DocumentTFIDF object
                 DocumentTFIDF docTFIDF = new DocumentTFIDF(docId, tfidf);
-
-                // Add to documentVectors
                 documentVectors.computeIfAbsent(term, k -> new ArrayList<>()).add(docTFIDF);
             }
         }
@@ -45,8 +40,12 @@ public class TFIDFCalculator {
         if (!invertedIndex.containsKey(term)) {
             return 0;
         }
-        int df = invertedIndex.get(term).size(); // Document frequency
+        int df = invertedIndex.get(term).size();
         return Math.log10((double) totalDocuments / df);
+    }
+
+    public Map<String, List<DocumentTFIDF>> GetDocumentVectors() {
+        return documentVectors;
     }
 
     public void printIndex() {
