@@ -48,6 +48,19 @@ public class TFIDFCalculator {
         return documentVectors;
     }
 
+    public double getTFIDF(String term, int docId) {
+        List<DocumentTFIDF> docs = documentVectors.get(term);
+        if (docs == null)
+            return 0;
+
+        for (DocumentTFIDF doc : docs) {
+            if (doc.docId == docId) {
+                return doc.tfidf;
+            }
+        }
+        return 0;
+    }
+
     public void printIndex() {
         for (Map.Entry<String, List<DocumentTFIDF>> entry : documentVectors.entrySet()) {
             System.out.printf("%-1s -> %s%n", entry.getKey(), entry.getValue());
