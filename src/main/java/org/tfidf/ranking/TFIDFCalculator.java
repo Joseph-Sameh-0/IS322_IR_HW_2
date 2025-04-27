@@ -36,7 +36,7 @@ public class TFIDFCalculator {
         }
     }
 
-    private double calculateIDF(String term) {
+    public double calculateIDF(String term) {
         if (!invertedIndex.containsKey(term)) {
             return 0;
         }
