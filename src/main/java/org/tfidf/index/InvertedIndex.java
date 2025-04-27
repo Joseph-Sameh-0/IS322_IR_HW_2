@@ -108,4 +108,47 @@ public class InvertedIndex {
             System.out.printf("%-15s -> %s%n", entry.getKey(), entry.getValue());
         }
     }
+
+    public int getDocumentCount() {
+        Set<Integer> docIds = new HashSet<>();
+        for (List<Posting> postings : index.values()) {
+            for (Posting posting : postings) {
+                docIds.add(posting.docID);
+            }
+        }
+        return docIds.size();
+    }
+
+    public Set<String> getTerms() {
+        return index.keySet();
+    }
+
+    public int getDocumentFrequency(String term) {
+        List<Posting> postings = index.get(term);
+        return postings == null ? 0 : postings.size();
+    }
+
+    public Map<String, Integer> getTermFrequencies(int docId) {
+        Map<String, Integer> termFreq = new HashMap<>();
+        for (Map.Entry<String, List<Posting>> entry : index.entrySet()) {
+            String term = entry.getKey();
+            for (Posting posting : entry.getValue()) {
+                if (posting.docID == docId) {
+                    termFreq.put(term, posting.tf);
+                }
+            }
+        }
+        return termFreq;
+    }
+
+    public Set<Integer> getAllDocumentIds() {
+        Set<Integer> docIds = new HashSet<>();
+        for (List<Posting> postings : index.values()) {
+            for (Posting posting : postings) {
+                docIds.add(posting.docID);
+            }
+        }
+        return docIds;
+    }
+
 }
