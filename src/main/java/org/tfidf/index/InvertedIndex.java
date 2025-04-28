@@ -39,7 +39,9 @@ public class InvertedIndex {
             Map<String, Integer> termFrequency = new HashMap<>();
             List<String> tokens = normalizer.getLemmas(contentBuilder.toString());
             for (String token : tokens) {
-                token = token.toLowerCase().replaceAll("\\W+", ""); // Clean and normalize token: lowercase, remove non-word characters
+                token = token
+//                        .toLowerCase()
+                        .replaceAll("\\W+", ""); // Clean and normalize token: lowercase, remove non-word characters
                 if (token.isEmpty()) continue;
                 termFrequency.put(token, termFrequency.getOrDefault(token, 0) + 1); //count frequency
             }
@@ -74,7 +76,9 @@ public class InvertedIndex {
             List<String> tokens = normalizer.getLemmas(processedContent);
 
             for (String token : tokens) {
-                token = token.toLowerCase().replaceAll("\\W+", "");
+                token = token
+//                        .toLowerCase()
+                        .replaceAll("\\W+", "");
                 if (!token.isEmpty()) {
                     termFrequency.put(token, termFrequency.getOrDefault(token, 0) + 1);
                 }
@@ -149,6 +153,19 @@ public class InvertedIndex {
             }
         }
         return docIds;
+    }
+
+    public int getTermTotalFrequency(String term) {
+        List<Posting> postings = index.get(term);
+        if (postings == null) {
+            return 0;
+        }
+
+        int totalFrequency = 0;
+        for (Posting posting : postings) {
+            totalFrequency += posting.tf;
+        }
+        return totalFrequency;
     }
 
 }

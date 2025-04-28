@@ -44,7 +44,7 @@ public class Normalizer {
         for (CoreLabel token : document.tokens()) {
             String lemma = token.lemma();
             if (lemma.matches("\\w+")) {
-                lemmas.add(lemma);
+                lemmas.add(lemma.toLowerCase());
             }
         }
         return lemmas;
