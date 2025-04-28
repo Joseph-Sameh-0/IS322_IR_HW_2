@@ -12,22 +12,20 @@ public class Main {
         public static void main(String[] args) throws Exception {
                 final int MAX_PAGES = 10;
 
-                // WebCrawler crawler = new WebCrawler();
-                //
-                // System.out.println("Seed 1");
-                // crawler.crawl("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
-                //
-                // System.out.println("\nSeed 2");
-                // crawler.crawl("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES);
-
-                ///////////////////////////////////////////////////////////////////////
-
                 // 1. Start crawling from seed URLs
-                List<String> documents = WebCrawler.crawlToMemory("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
-                documents.addAll(WebCrawler.crawlToMemory("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES));
+
+                System.out.println("Seed 1");
+                WebCrawler.crawl("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
+
+                System.out.println("\nSeed 2");
+                WebCrawler.crawl("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES);
+
+
+//                List<String> documents = WebCrawler.crawlToMemory("https://en.wikipedia.org/wiki/Pharaoh", MAX_PAGES);
+//                documents.addAll(WebCrawler.crawlToMemory("https://en.wikipedia.org/wiki/List_of_pharaohs", MAX_PAGES));
 
                 // System.out.println(documents);
-                System.out.println("Crawled " + documents.size() + " documents");
+//                System.out.println("Crawled " + documents.size() + " documents");
 
                 // documents.forEach(
                 // doc ->
@@ -41,13 +39,14 @@ public class Main {
                 InvertedIndex index = new InvertedIndex();
                 System.out.println("Loading....");
 
-                index.buildIndex(documents);
+                index.buildIndex("documents");
                 System.out.println("Finish indexing");
 
                 // index.printIndex();
+//                System.out.println(index.getAllDocumentIds().size());
 
                 // 3. Compute TF-IDF weights
-                TFIDFCalculator tfidfCalculator = new TFIDFCalculator(index, documents.size());
+                TFIDFCalculator tfidfCalculator = new TFIDFCalculator(index, index.getAllDocumentIds().size());
                 tfidfCalculator.compute(); // prepares TF-IDF weights for all terms.
 
                 Ranker ranker = new Ranker(index, tfidfCalculator);
