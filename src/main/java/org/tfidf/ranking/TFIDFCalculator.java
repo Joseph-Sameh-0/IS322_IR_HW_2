@@ -66,4 +66,33 @@ public class TFIDFCalculator {
             System.out.printf("%-1s -> %s%n", entry.getKey(), entry.getValue());
         }
     }
+
+    // Returns the TF-IDF vector for a specific document
+    public Map<String, Double> getDocumentVector(int docId) {
+        Map<String, Double> vector = new HashMap<>();
+
+        for (Map.Entry<String, List<DocumentTFIDF>> entry : documentVectors.entrySet()) {
+            String term = entry.getKey();
+            List<DocumentTFIDF> docList = entry.getValue();
+
+            for (DocumentTFIDF docTFIDF : docList) {
+                if (docTFIDF.docId == docId) {
+                    vector.put(term, docTFIDF.tfidf);
+                }
+            }
+        }
+        return vector;
+    }
+
+    // Returns the IDF values for all terms
+    public Map<String, Double> getIdfValues() {
+        Map<String, Double> idfMap = new HashMap<>();
+
+        for (String term : invertedIndex.keySet()) {
+            double idf = calculateIDF(term);
+            idfMap.put(term, idf);
+        }
+        return idfMap;
+    }
+    
 }
