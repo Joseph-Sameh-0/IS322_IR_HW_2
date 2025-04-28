@@ -35,8 +35,6 @@ webcrawler-tfidf/
 ├── report/
 │   ├── Report.pdf
 │   └── UserManual.pdf
-├── presentation/
-│   └── ProjectPresentation.pptx
 ├── src/
 │   └── main/
 │       └── java/
@@ -46,8 +44,7 @@ webcrawler-tfidf/
 │                   ├── crawler/
 │                   │   └── WebCrawler.java            # Amany, Israa
 │                   ├── text/
-│                   │   ├── TextProcessor.java         # Joseph, Yousef
-│                   │   └── Normalizer.java
+│                   │   └── Normalizer.java     # Joseph, Yousef
 │                   ├── index/
 │                   │   ├── InvertedIndex.java         # Joseph, Yousef
 │                   │   └── Posting.java
@@ -55,13 +52,6 @@ webcrawler-tfidf/
 │                   │   ├── TFIDFCalculator.java       # Salma, Jonathan
 │                   │   ├── CosineSimilarity.java
 │                   │   └── Ranker.java
-│                   └── util/
-│                       └── HtmlParser.java
-└── test/
-    └── java/
-        └── com/
-            └── tfidf/
-                └── WebCrawlerTest.java
 ```
 
 ---
