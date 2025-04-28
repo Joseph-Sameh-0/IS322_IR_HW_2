@@ -9,12 +9,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Ranker {
-    private final InvertedIndex index;
     private final TFIDFCalculator tfidfCalculator;
     private final Normalizer normalizer = new Normalizer();
 
-    public Ranker(InvertedIndex index, TFIDFCalculator tfidfCalculator) {
-        this.index = index;
+    public Ranker(TFIDFCalculator tfidfCalculator) {
         this.tfidfCalculator = tfidfCalculator;
     }
 
@@ -26,10 +24,6 @@ public class Ranker {
         Map<String, Double> queryVector = new HashMap<>();
         for (String term : queryTerms) {
             double count = Collections.frequency(queryTerms, term);
-//            if (!index.getIndex().containsKey(term)) {
-//                continue;
-//            }
-//            int df = index.getIndex().get(term).size();
             queryVector.put(term, count * tfidfCalculator.calculateIDF(term));// maps each term to its term frequency in query
         }
         queryVector = normalizeVector(queryVector);

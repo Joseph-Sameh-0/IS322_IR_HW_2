@@ -49,7 +49,7 @@ public class Main {
                 TFIDFCalculator tfidfCalculator = new TFIDFCalculator(index, index.getAllDocumentIds().size());
                 tfidfCalculator.compute(); // prepares TF-IDF weights for all terms.
 
-                Ranker ranker = new Ranker(index, tfidfCalculator);
+                Ranker ranker = new Ranker(tfidfCalculator);
 
                 Scanner scanner = new Scanner(System.in);
                 while (true) {// // 4. Get user query
