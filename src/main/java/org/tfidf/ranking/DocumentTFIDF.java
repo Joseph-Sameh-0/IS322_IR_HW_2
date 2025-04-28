@@ -9,6 +9,14 @@ class DocumentTFIDF {
         this.tfidf = tfidf;
     }
 
+    public int getDocId() {
+        return docId;
+    }
+
+    public double getTfidf() {
+        return tfidf;
+    }
+
     @Override
     public String toString() {
         return "(docId = " + docId + ", tfidf = " + tfidf + ')';

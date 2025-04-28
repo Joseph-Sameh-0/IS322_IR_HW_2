@@ -26,7 +26,7 @@ public class TFIDFCalculator {
                 int docId = posting.docID;
                 int tf = posting.tf;
 
-                double tfWeight = 1 + Math.log10(tf);
+                double tfWeight = 1 + Math.log10(tf); // log frequency weighting
 
                 double tfidf = tfWeight * idf;
 
@@ -36,7 +36,7 @@ public class TFIDFCalculator {
         }
     }
 
-    private double calculateIDF(String term) {
+    public double calculateIDF(String term) {
         if (!invertedIndex.containsKey(term)) {
             return 0;
         }
