@@ -34,7 +34,6 @@ webcrawler-tfidf/
 ├── README.md
 ├── report/
 │   ├── Report.pdf
-│   └── UserManual.pdf
 ├── src/
 │   └── main/
 │       └── java/
