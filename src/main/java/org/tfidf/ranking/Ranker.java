@@ -1,19 +1,19 @@
 package org.tfidf.ranking;
 
+import org.tfidf.index.DocumentInfo;
 import org.tfidf.index.InvertedIndex;
-import org.tfidf.index.Posting;
 import org.tfidf.text.Normalizer;
 
-import java.sql.SQLOutput;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Ranker {
     private final TFIDFCalculator tfidfCalculator;
+    private final InvertedIndex index;
     private final Normalizer normalizer = new Normalizer();
 
-    public Ranker(TFIDFCalculator tfidfCalculator) {
+    public Ranker(InvertedIndex index, TFIDFCalculator tfidfCalculator) {
         this.tfidfCalculator = tfidfCalculator;
+        this.index = index;
     }
 
     public void rankAndDisplayTopDocuments(String query, int topK) {
@@ -40,11 +40,24 @@ public class Ranker {
             scores.put(docId, similarity);
         }
 
+        // Print header (optional)
+        System.out.println("+---------------------------------------------+--------------+------------------------------------------------------------------------------------------------------+");
+        System.out.printf("| %-43s | %-12s | %-100s |%n", "Title", "Score", "URL");
+        System.out.println("+---------------------------------------------+--------------+------------------------------------------------------------------------------------------------------+");
+
         scores.entrySet().stream()
                 .sorted(Map.Entry.<Integer, Double>comparingByValue().reversed())
                 .limit(topK)
-                .forEach(entry -> System.out.println("DocID: " + entry.getKey() + ", Score: " + entry.getValue()));
+                .forEach(entry -> {
+                    DocumentInfo docInfo = index.getDocumentInfo(entry.getKey());
+                    double score = entry.getValue();
 
+                    // Truncate title if too long
+                    String title = docInfo.title.length() > 40 ? docInfo.title.substring(0, 37) + "..." : docInfo.title;
+
+                    System.out.printf("| %-43s | %-1.10f | %-100s |%n", title, score, docInfo.url);
+                });
+        System.out.println("+---------------------------------------------+--------------+------------------------------------------------------------------------------------------------------+");
     }
 
 

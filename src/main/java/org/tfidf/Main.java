@@ -49,14 +49,20 @@ public class Main {
                 TFIDFCalculator tfidfCalculator = new TFIDFCalculator(index, index.getAllDocumentIds().size());
                 tfidfCalculator.compute(); // prepares TF-IDF weights for all terms.
 
-                Ranker ranker = new Ranker(tfidfCalculator);
+                Ranker ranker = new Ranker(index, tfidfCalculator);
 
                 Scanner scanner = new Scanner(System.in);
                 while (true) {// // 4. Get user query
-                        System.out.println("Enter exit() or your search query:");
+                        System.out.println("Enter exit() or printIndex() or your search query:");
                         String queryInput = scanner.nextLine();
                         if (queryInput.equals("exit()"))
                                 break;
+
+                        if (queryInput.equals("printIndex()")){
+                                index.printIndex();
+                                continue;
+                        }
+
 
                         // // 5. Rank documents by cosine similarity
                         ranker.rankAndDisplayTopDocuments(queryInput, 10); // processes the query, computes cosine
