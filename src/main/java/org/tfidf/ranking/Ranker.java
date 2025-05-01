@@ -5,6 +5,7 @@ import org.tfidf.index.InvertedIndex;
 import org.tfidf.text.Normalizer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Ranker {
     private final TFIDFCalculator tfidfCalculator;
@@ -40,24 +41,35 @@ public class Ranker {
             scores.put(docId, similarity);
         }
 
-        // Print header (optional)
-        System.out.println("+---------------------------------------------+--------------+------------------------------------------------------------------------------------------------------+");
-        System.out.printf("| %-43s | %-12s | %-100s |%n", "Title", "Score", "URL");
-        System.out.println("+---------------------------------------------+--------------+------------------------------------------------------------------------------------------------------+");
-
-        scores.entrySet().stream()
+        List<Map.Entry<Integer, Double>> filteredResults = scores.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)  // Filter out scores = 0
                 .sorted(Map.Entry.<Integer, Double>comparingByValue().reversed())
                 .limit(topK)
-                .forEach(entry -> {
-                    DocumentInfo docInfo = index.getDocumentInfo(entry.getKey());
-                    double score = entry.getValue();
+                .collect(Collectors.toList());
 
-                    // Truncate title if too long
-                    String title = docInfo.title.length() > 40 ? docInfo.title.substring(0, 37) + "..." : docInfo.title;
+        if (filteredResults.isEmpty()) {
+            System.out.println("No Result Found");
+        } else {
+            String divider = "+" + "-".repeat(45) + "+" + "-".repeat(14) + "+" + "-".repeat(102) + "+";
 
-                    System.out.printf("| %-43s | %-1.10f | %-100s |%n", title, score, docInfo.url);
-                });
-        System.out.println("+---------------------------------------------+--------------+------------------------------------------------------------------------------------------------------+");
+            System.out.println(divider);
+            System.out.printf("| %-43s | %-12s | %-100s |%n", "Title", "Score", "URL");
+            System.out.println(divider);
+
+            scores.entrySet().stream()
+                    .sorted(Map.Entry.<Integer, Double>comparingByValue().reversed())
+                    .limit(topK)
+                    .forEach(entry -> {
+                        DocumentInfo docInfo = index.getDocumentInfo(entry.getKey());
+                        double score = entry.getValue();
+
+                        // Truncate title if too long
+                        String title = docInfo.title.length() > 40 ? docInfo.title.substring(0, 37) + "..." : docInfo.title;
+
+                        System.out.printf("| %-43s | %-1.10f | %-100s |%n", title, score, docInfo.url);
+                    });
+            System.out.println(divider);
+        }
     }
 
 
